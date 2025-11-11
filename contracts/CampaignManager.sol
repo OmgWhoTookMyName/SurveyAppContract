@@ -19,7 +19,7 @@ contract CampaignManager{
 
     function StartCampaign(address[] calldata participants, uint8 incentPercent) public payable {
         require(participants.length <= 100, "");
-        uint16 ci = campIndex++;
+        uint16 ci = ++campIndex;
         Campaign storage c = campaigns[ci];
 
         //Set the Parties
