@@ -16,4 +16,10 @@ contract Mathtester {
         emit Mathness(raw / trunc);
     }
 
+    function truncChecker(uint256 x1, uint256 x2) public{
+
+        percNum = (x1/x2);
+        emit Mathness(x1/x2);
+    }
+
 }

@@ -7,7 +7,9 @@ contract CampaignManager{
         address campaigner;
         mapping( address => bool ) partic;//Participants
         uint256 fund;
+        uint256 fundPerPart;
         uint8 incent; //incentive percentage
+        uint256 incentPerPart;
     }
 
     event CampaignCreated(uint16 curCampIndex, uint256 fundAmount);
@@ -19,9 +21,12 @@ contract CampaignManager{
 
     function StartCampaign(address[] calldata participants, 
                         uint8 incentPercent) public payable {
-        require(participants.length <= 100, 
-        "No more than 100 participants");
-        require(participants.length <= msg.value, "" );
+        require(participants.length <= 100 && participants.length > 0, 
+        "0 to 100 participants");
+        require(participants.length + devFee <= msg.value, "Insufficient wei");
+        if(incentPercent > 0){
+            require((participants.length * 2) + devFee <= msg.value, "Insufficient wei for incentive");
+        }
 
         uint16 ci = ++campIndex;
         Campaign storage c = campaigns[ci];
@@ -33,20 +38,17 @@ contract CampaignManager{
         }
 
         //Decipher the funds
-        if(msg.value > 0){
-            c.fund = msg.value - (percentFinder(msg.value, 1));
-            c.incent = incentPercent;
-        }
-        else{
-            c.fund = 0;
-            c.incent = 0;
-        }
+        c.fund = msg.value - (percentFinder(msg.value, 1));
+        
 
-        emit CampaignCreated(ci);
+        //Calculate incentive
+        // if()
+
+        emit CampaignCreated(ci, c.fund);
     }
 
     function percentFinder(uint256 camp_amount, uint256 per) pure public returns (uint256){
-        require(camp_amount > 0 && per > 0, "Invalid percentage number")
+        require(camp_amount > 0 && per > 0, "Invalid percentage number");
         
         uint256 trunc = 100;
         uint256 raw = camp_amount * per;

@@ -18,4 +18,10 @@ contract MathtesterTest is Test {
         require(mt.percNum() == answer, "Answer should be 100");
     }
 
+    function test_trunc() public {
+        mt.truncChecker(101, 100);
+
+        require(mt.percNum() == 1, "Answer should be 1");
+    }   
+
 }
