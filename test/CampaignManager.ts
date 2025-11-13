@@ -12,6 +12,10 @@ describe("CampaignManager", function (){
     await expect(cm.StartCampaign(user, 10n)).to.emit(cm, "CampaignCreated").withArgs(1n);
   });
 
-
+  //What happens if you pass in no wei?
+  //What happens if you pass in 1 wei?
+  //1 wei among many people
+  //Pass in 101 people
+  //Pass in no people
   
 });
