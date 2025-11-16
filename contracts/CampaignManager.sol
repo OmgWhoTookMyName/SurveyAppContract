@@ -23,9 +23,9 @@ contract CampaignManager{
                         uint8 incentPercent) public payable {
         require(participants.length <= 100 && participants.length > 0, 
         "0 to 100 participants");
-        require(participants.length + devFee <= msg.value, "Insufficient wei");
+        require(participants.length <= msg.value, "Insufficient wei");
         if(incentPercent > 0){
-            require((participants.length * 2) + devFee <= msg.value, "Insufficient wei for incentive");
+            require((participants.length * 2)<= msg.value, "Insufficient wei for incentive");
         }
 
         uint16 ci = ++campIndex;
