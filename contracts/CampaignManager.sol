@@ -16,7 +16,7 @@ contract CampaignManager{
 
     uint8 devFee = 1; //1% dev fee
     uint16 campIndex = 0;
-    mapping(uint => Campaign) campaigns; 
+    mapping(uint16 => Campaign) campaigns; 
 
 
     function StartCampaign(address[] calldata participants, 
@@ -39,10 +39,16 @@ contract CampaignManager{
 
         //Decipher the funds
         c.fund = msg.value - (percentFinder(msg.value, 1));
-        
 
-        //Calculate incentive
-        // if()
+        if(incentPercent == 0){
+            c.incentPerPart = 0;
+            c.fundPerPart = c.fund / participants.length;
+        }
+        else{
+            uint256 totalIncent = percentFinder(c.fund, incentPercent);
+            c.incentPerPart = totalIncent / participants.length;
+            c.fundPerPart = (c.fund - totalIncent) / participants.length;
+        }
 
         emit CampaignCreated(ci, c.fund);
     }
@@ -55,5 +61,10 @@ contract CampaignManager{
 
         return (raw / trunc);
     }
+
+    function getCampFund(uint16 cInd) public view returns (uint256){
+        return campaigns[cInd].fund;
+    }
+
 
 }
