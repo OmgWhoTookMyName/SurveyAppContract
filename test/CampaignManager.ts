@@ -27,7 +27,7 @@ describe("Campaign start function", function (){
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
     const user = [addr1,addr2,addr3];
 
-    await expect(cm.StartCampaign(user, 10n)).to.revertedWith('Insufficient wei');
+    await expect(cm.StartCampaign(user, 10n)).to.revertedWith('Insufficient wei for campaign');
   });
 
   //What happens if you pass in 1 wei?
@@ -40,27 +40,45 @@ describe("Campaign start function", function (){
 
     await expect(cm.StartCampaign(user, 10n, {
       value: 1
-    })).to.revertedWith('Insufficient wei');
+    })).to.revertedWith('Insufficient wei for campaign');
   });
 
 
   //What happens when you pass in the minimum viable amount of wei?
   //TODO: Check the funds per participant and incentive, what do we expect them to be?
-    it("Should emit the campaign started event when calling with minimum viable wei", async function () {
+    it("Should emit the campaign started event when calling with minimum wei", async function () {
     const cm = await ethers.deployContract("CampaignManager");
 
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
     const user = [addr1,addr2,addr3];
 
-    const campaignFund = user.length * 2;
+    const campaignFund = user.length;
+    const devFee = campaignFund * .01;
+    const fundLessFee = campaignFund - devFee;
+
+    //With campaigns < 100 wei fees are not extracted
+    await expect(cm.StartCampaign(user, 0n, {
+      value: campaignFund
+    })).to.emit(cm, "CampaignCreated").withArgs(1n, BigInt(Math.round(fundLessFee)));
+  });
+  //What happens if you're just shy of the minimum?
+      it("Should revert when calling campaign start without minimum wei", async function () {
+    const cm = await ethers.deployContract("CampaignManager");
+
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const user = [addr1,addr2,addr3];
+
+    const campaignFund = user.length - 1;
     const devFee = campaignFund * .01;
     const fundLessFee = campaignFund - devFee;
 
     //With campaigns < 100 wei fees are not extracted
     await expect(cm.StartCampaign(user, 10n, {
       value: campaignFund
-    })).to.emit(cm, "CampaignCreated").withArgs(1n, BigInt(Math.round(fundLessFee)));
+    })).to.revertedWith('Insufficient wei for campaign');
   });
+
+
   //What is the minimum amount viable to collect a dev fee?
   //Need at least 100 wei per person to collect fee
       it("Should collect dev fee on campaign start with at least 100 wei per participant", async function () {
