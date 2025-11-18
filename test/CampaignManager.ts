@@ -45,7 +45,6 @@ describe("Campaign start function", function (){
 
 
   //What happens when you pass in the minimum viable amount of wei?
-  //TODO: Check the funds per participant and incentive, what do we expect them to be?
     it("Should emit the campaign started event when calling with minimum wei", async function () {
     const cm = await ethers.deployContract("CampaignManager");
 
