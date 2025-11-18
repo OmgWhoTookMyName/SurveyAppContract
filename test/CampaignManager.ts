@@ -61,9 +61,12 @@ describe("Campaign start function", function (){
       value: campaignFund
     })).to.emit(cm, "CampaignCreated").withArgs(1n, BigInt(Math.round(fundLessFee)));
 
-    const perPar = await cm.getCampPerParticipant(1n);
-
+    //Check funds per participant
+    const perPar = await cm.getFundPerParticipantByCid(1n);
     expect(perPar).to.equal(1n);
+
+    const incentPerPar = await cm.getIncentivePerPartByCid(1n);
+    expect(incentPerPar).to.equal(0n);
   });
 
 
@@ -106,5 +109,6 @@ describe("Campaign start function", function (){
   //1 wei among many people
   //Pass in 101 people
   //Pass in no people
+  //What happens when funds cannot be evenly distributed among participants
   
 });

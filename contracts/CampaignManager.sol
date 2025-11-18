@@ -66,9 +66,12 @@ contract CampaignManager{
         return campaigns[cInd].fund;
     }
 
-    function getCampPerParticipant(uint16 cInd) public view returns (uint256){
+    function getFundPerParticipantByCid(uint16 cInd) public view returns (uint256){
         return campaigns[cInd].fundPerPart;
     }
 
+    function getIncentivePerPartByCid(uint16 cInd) public view returns (uint256){
+        return campaigns[cInd].incentPerPart;
+    }
 
 }
