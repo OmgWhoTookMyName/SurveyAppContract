@@ -60,7 +60,13 @@ describe("Campaign start function", function (){
     await expect(cm.StartCampaign(user, 0n, {
       value: campaignFund
     })).to.emit(cm, "CampaignCreated").withArgs(1n, BigInt(Math.round(fundLessFee)));
+
+    const perPar = await cm.getCampPerParticipant(1n);
+
+    expect(perPar).to.equal(1n);
   });
+
+
   //What happens if you're just shy of the minimum?
       it("Should revert when calling campaign start without minimum wei", async function () {
     const cm = await ethers.deployContract("CampaignManager");
